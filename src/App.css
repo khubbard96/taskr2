@@ -1,5 +1,8 @@
 .App {
   text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .App-logo {
@@ -27,12 +30,19 @@
 .App-link {
   color: #61dafb;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.Swimlanes {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+}
+.Swimlane {
+    width: 500px;
+    background-color: green;
+    margin: 0 20px;
+}
+.Swimlane-tasks {
+    display: unset;
+}
+.Taskr-item {
+    cursor: pointer;
 }
