@@ -4,20 +4,23 @@ import { Draggable } from 'react-beautiful-dnd';
 class TaskrItem extends React.Component {
     constructor(props) {
         super(props);
-        this.state = props.item;
+        this.state = {
+            id: props.item.getId(),
+            item: props.item,
+            draggableIdx: props.draggableIdx
+        }
     }
 
     render() {
-        let draggableId = 'draggable-' + this.state.id;
         return (
-            <Draggable draggableId={draggableId} index={this.state.id}>
+            <Draggable draggableId={this.state.draggableIdx+""} index={this.state.draggableIdx}>
                 {(provided, snapshot) => (
                     <div 
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     className="Taskr-item">
-                        {this.state.title} {this.state.id}
+                        {this.state.item.getTitle()}
                     </div>
                 )}
             </Draggable>

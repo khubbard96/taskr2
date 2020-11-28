@@ -5,18 +5,17 @@ import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
 class Swimlane extends React.Component {
     constructor(props) {
         super(props);
-        let _items = props.items.filter(item => item.swimlane == props.id)
         this.state = {
             name: props.name,
             id: props.id,
-            items: _items
+            items: props.items
         }
     }
     render() {
-        let droppableId = "droppable-" + this.state.id;
         let itemsContained = [];
-        for (const [index, value] of this.state.items.entries()) {
-            itemsContained.push(<TaskrItem item={value} />)
+        let items = this.state.items.toArray()
+        for (let i = 0; i < items.length; i++) {
+            itemsContained.push(<TaskrItem key={items[i].getId()} item={items[i]} id={items[i].getId()} draggableIdx={i}></TaskrItem>)
         }
         return (
             <div className="Swimlane">
@@ -24,10 +23,11 @@ class Swimlane extends React.Component {
                     {this.state.name}
                 </div>
                 <div className="Swimlane-tasks">
-                    <Droppable droppableId={droppableId} type="TASK">
+                    <Droppable droppableId={this.state.id} type="TASK">
                         {(provided, snapshot) => (
                             <div ref={provided.innerRef}>
                                 {itemsContained}
+                                {provided.placeholder}
                             </div>
                         )}
                     </Droppable>

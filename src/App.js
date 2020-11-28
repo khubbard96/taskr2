@@ -1,33 +1,90 @@
-import './App.css';
-import SwimlaneContainer from './SwimlaneContainer';
-import React from "react";
-import { DragDropContext } from 'react-beautiful-dnd';
+import React, { useState } from "react";
+import { DragDropContext } from "react-beautiful-dnd";
+import getData from "./getData";
+import List from "./List";
 
-const items = [
-    {
-        id: 0,
-        title: "a title",
-        swimlane: 0
-    },
-    {
-        id: 1,
-        title: "a title",
-        swimlane: 1
-    },
-    {
-        id: 2,
-        title: "a title",
-        swimlane: 2
-    },
-]
+const columns = getData(2);
+const data = {
+    columns: {}
+}
+for (let i = 0; i < columns.length; i++) {
+    data.columns[i] = columns[i];
+}
 
+export default function App() {
+    const [appData, setData] = useState(data);
+    const onDragEnd = result => {
 
-function App() {
+        const { destination, source, draggableId } = result;
+
+        if (!destination) {
+            return;
+        }
+
+        if (destination.droppableId === source.droppableId && destination.index === source.index) {
+            return;
+        }
+
+        const start = appData.columns[source.droppableId];
+        const finish = appData.columns[destination.droppableId];
+
+        if (start === finish) {
+            const newTaskIds = Array.from(start.items);
+            let [removedItem] = newTaskIds.splice(source.index, 1);
+            newTaskIds.splice(destination.index, 0, removedItem);
+
+            const newColumn = {
+                ...finish,
+                items: newTaskIds,
+            };
+
+            const newState = {
+                ...appData,
+                columns: {
+                    ...appData.columns,
+                    [newColumn.id]: newColumn,
+                },
+            };
+
+            setData(newState);
+            return;
+        }
+
+        // Moving from one list to another
+        const startTaskIds = Array.from(start.items);
+        let [removedItem] = startTaskIds.splice(source.index, 1);
+        const newStart = {
+            ...start,
+            items: startTaskIds,
+        };
+
+        const finishTaskIds = Array.from(finish.items);
+        finishTaskIds.splice(destination.index, 0, removedItem);
+        const newFinish = {
+            ...finish,
+            items: finishTaskIds,
+        };
+
+        const newState = {
+            ...appData,
+            columns: {
+                ...appData.columns,
+                [newStart.id]: newStart,
+                [newFinish.id]: newFinish,
+            },
+        };
+        setData(newState);
+    };
     return (
         <div className="App">
-                <SwimlaneContainer items={items}/>
+            <h1>You can drag & drop items in the below list</h1>
+            <div className="Swimlanes">
+                <DragDropContext onDragEnd={onDragEnd}>
+                    <List data={appData.columns[0]} />
+                    <List data={appData.columns[1]} />
+                </DragDropContext>
+            </div>
+
         </div>
     );
 }
-
-export default App;

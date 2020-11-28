@@ -6,28 +6,38 @@ class SwimlaneContainer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            swimlanes: ["A", "B", "C"],
-            items: props.items
+            items: props.items,
+            columns: ["A"],
         };
     }
 
     onDragEnd = (arg) => {
-        console.log(arg);
+        const { destination, source, draggableId } = arg;
+        if (!destination) {
+            return;
+        }
+        if (destination.droppableId === source.droppableId && destination.index === source.index) {
+            return;
+        }
+
+        this.state.items.move(source.index, destination.index);
+
+        this.setState({items: this.state.items});
     }
     render() {
 
         let swimlanes = [];
-        for (const [index, value] of this.state.swimlanes.entries()) {
-            swimlanes.push(<Swimlane id={index} name={value} items={this.state.items}></Swimlane>)
+        for (const [index, value] of this.state.columns.entries()) {
+            swimlanes.push(<Swimlane id={value} name={value} items={this.state.items} key={index}></Swimlane>)
         }
 
         return (
 
             <div className="Swimlanes">
                 <DragDropContext
-                    onDragEnd={this.onDragEnd}
+                onDragEnd={this.onDragEnd}
                 >
-                {swimlanes}
+                    {swimlanes}
                 </DragDropContext>
             </div>
         );
