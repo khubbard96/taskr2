@@ -4,8 +4,8 @@ import ListItem from "./ListItem";
 export default function List({ data }) {
     const { id, title, items } = data;
     return (
-        <div className="list">
-            <h1>{title}</h1>
+        <div className="list Swimlane-container">
+            <div className="title">{title}</div>
             <Droppable droppableId={id}>
                 {provided => (
                     <div

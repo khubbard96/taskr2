@@ -4,7 +4,8 @@ function createItem(_, id) {
     nextId++;
     return {
       id: `item-${nextId}`,
-      title: `item ${nextId}`
+      title: `item ${nextId}`,
+      subtext: `subtext of item ${nextId}`
     };
   }
   

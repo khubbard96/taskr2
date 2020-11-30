@@ -3,7 +3,7 @@ import { DragDropContext } from "react-beautiful-dnd";
 import getData from "./getData";
 import List from "./List";
 
-const columns = getData(2);
+const columns = getData(4);
 const data = {
     columns: {}
 }
@@ -13,6 +13,8 @@ for (let i = 0; i < columns.length; i++) {
 
 export default function App() {
     const [appData, setData] = useState(data);
+
+    //drag drop core;
     const onDragEnd = result => {
 
         const { destination, source, draggableId } = result;
@@ -77,11 +79,14 @@ export default function App() {
     };
     return (
         <div className="App">
-            <h1>You can drag & drop items in the below list</h1>
+            <h1>Taskr</h1>
             <div className="Swimlanes">
                 <DragDropContext onDragEnd={onDragEnd}>
-                    <List data={appData.columns[0]} />
-                    <List data={appData.columns[1]} />
+                    {
+                        Object.values(appData.columns).map((column, index)=>(
+                            <List data={column} />
+                        ))
+                    }
                 </DragDropContext>
             </div>
 
