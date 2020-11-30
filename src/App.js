@@ -1,18 +1,21 @@
 import React, { useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
+import Button from "react-bootstrap/Button";
 import getData from "./getData";
 import List from "./List";
+import TaskrEditor from "./TaskrEditor";
 
 const columns = getData(4);
 const data = {
-    columns: {}
+    columns: columns
 }
-for (let i = 0; i < columns.length; i++) {
-    data.columns[i] = columns[i];
-}
+/*for (let i = 0; i < columns.length; i++) {
+    data.columns[i + "1"] = columns[i];
+}*/
 
 export default function App() {
     const [appData, setData] = useState(data);
+    const [show, setShow] = useState(false);
 
     //drag drop core;
     const onDragEnd = result => {
@@ -27,10 +30,15 @@ export default function App() {
             return;
         }
 
-        const start = appData.columns[source.droppableId];
-        const finish = appData.columns[destination.droppableId];
+        //const start = appData.columns[source.droppableId];
+        //const finish = appData.columns[destination.droppableId];
 
-        if (start === finish) {
+        const startIdx = appData.columns.findIndex(col => col.id === source.droppableId);
+        const start = appData.columns[startIdx];
+        const finishIdx = appData.columns.findIndex(col => col.id === destination.droppableId);
+        const finish = appData.columns[finishIdx];
+
+        if (startIdx === finishIdx) {
             const newTaskIds = Array.from(start.items);
             let [removedItem] = newTaskIds.splice(source.index, 1);
             newTaskIds.splice(destination.index, 0, removedItem);
@@ -42,10 +50,7 @@ export default function App() {
 
             const newState = {
                 ...appData,
-                columns: {
-                    ...appData.columns,
-                    [newColumn.id]: newColumn,
-                },
+                columns: appData.columns.map((val, idx) => (val.id === finish.id ? newColumn : appData.columns[idx])),
             };
 
             setData(newState);
@@ -69,21 +74,46 @@ export default function App() {
 
         const newState = {
             ...appData,
-            columns: {
+            columns: [
                 ...appData.columns,
-                [newStart.id]: newStart,
-                [newFinish.id]: newFinish,
-            },
+            ],
         };
+        newState.columns[startIdx] = newStart;
+        newState.columns[finishIdx] = newFinish;
         setData(newState);
     };
+
+    const handleShowEdit = () => setShow(true);
+    const handleHideEdit = () => setShow(false);
+    const handleSaveChanges =(newData) => {
+        setData(newData);
+        setShow(false);
+    }
+    const onEditClose = () => {
+
+    }
+
     return (
         <div className="App">
-            <h1>Taskr</h1>
+            <div>
+                <h1>Taskr</h1>
+                <Button
+                    variant="primary"
+                    onClick={handleShowEdit}
+                >
+                    Edit Taskr
+                </Button>
+                <TaskrEditor 
+                    show={show}
+                    onHideEdit={handleHideEdit}
+                    onSaveChanges={handleSaveChanges}
+                    appData={appData}
+                ></TaskrEditor>
+            </div>
             <div className="Swimlanes">
                 <DragDropContext onDragEnd={onDragEnd}>
                     {
-                        Object.values(appData.columns).map((column, index)=>(
+                        appData.columns.map((column, index) => (
                             <List data={column} />
                         ))
                     }

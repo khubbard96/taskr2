@@ -1,0 +1,13 @@
+.Taskr-editor .columns-list {
+    
+}
+
+.Taskr-editor .column-desc {
+    display: flex;
+    flex-direction: row;
+    padding: 5px;
+    margin: 5px 0;
+    background-color: #d0d0d0;
+    border-radius: 3px;
+    cursor: pointer;
+}
